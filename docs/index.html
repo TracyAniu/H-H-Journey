@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100天纪念日 ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* 星空背景 */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle linear infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .title-container {
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 2em;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 105, 180, 0.8), 0 0 40px rgba(255, 105, 180, 0.5);
+            display: inline-block;
+        }
+
+        .title span {
+            opacity: 0;
+            display: inline-block;
+            animation: fadeInUp 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .days-container {
+            perspective: 1000px;
+            margin: 30px 0;
+        }
+
+        .days {
+            font-size: 5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #ff6b6b);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientText 3s ease infinite, bounce 2s ease-in-out infinite;
+            text-shadow: none;
+        }
+
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) rotateX(0); }
+            50% { transform: translateY(-10px) rotateX(10deg); }
+        }
+
+        .photo-container {
+            position: relative;
+            margin: 30px auto;
+        }
+
+        .photo-frame {
+            width: 280px;
+            height: 350px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow:
+                0 0 30px rgba(255, 105, 180, 0.5),
+                0 0 60px rgba(255, 105, 180, 0.3),
+                0 20px 60px rgba(0,0,0,0.3);
+            margin: 0 auto;
+            border: 3px solid rgba(255,255,255,0.3);
+            animation: photoFloat 4s ease-in-out infinite, glow 2s ease-in-out infinite alternate;
+            position: relative;
+        }
+
+        @keyframes photoFloat {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 30px rgba(255, 105, 180, 0.5), 0 0 60px rgba(255, 105, 180, 0.3); }
+            to { box-shadow: 0 0 50px rgba(255, 105, 180, 0.8), 0 0 100px rgba(255, 105, 180, 0.5); }
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .photo-frame:hover img {
+            transform: scale(1.1);
+        }
+
+        /* 照片周围的光环 */
+        .photo-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 390px;
+            border: 2px solid transparent;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: rotate 4s linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .message {
+            font-size: 1.2em;
+            color: #fff;
+            margin: 30px 0;
+            text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+            line-height: 2;
+        }
+
+        .message span {
+            opacity: 0;
+            display: inline-block;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: rgba(255,255,255,0.8);
+            margin-top: 30px;
+            opacity: 0;
+            animation: fadeIn 1s forwards 5s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* 爱心粒子 */
+        .hearts {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .heart {
+            position: absolute;
+            animation: heartFloat linear infinite;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 5px currentColor);
+        }
+
+        @keyframes heartFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+                transform: translateY(90vh) rotate(36deg) scale(1);
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        /* 烟花效果 */
+        .fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* 流星效果 */
+        .meteor {
+            position: fixed;
+            width: 2px;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
+            animation: meteor 1s linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes meteor {
+            from {
+                transform: translateX(0) translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(-200px) translateY(200px);
+                opacity: 0;
+            }
+        }
+
+        /* 打字机光标 */
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.2em;
+            background: #ff6b6b;
+            margin-left: 5px;
+            animation: blink 0.8s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="fireworks" id="fireworks"></div>
+    <div class="hearts" id="hearts"></div>
+
+    <div class="container">
+        <div class="title-container">
+            <h1 class="title" id="title1"></h1>
+        </div>
+
+        <div class="days-container">
+            <div class="days" id="days">100</div>
+        </div>
+
+        <div class="title-container">
+            <h1 class="title" id="title2"></h1>
+        </div>
+
+        <div class="photo-container">
+            <div class="photo-ring"></div>
+            <div class="photo-frame">
+                <img src="https://s3.bmp.ovh/imgs/2026/01/07/25ebd62079aadc66.jpg" alt="我们的照片">
+            </div>
+        </div>
+
+        <p class="message" id="message"></p>
+
+        <p class="subtitle">—— 致我最爱的小恒宝贝 ——</p>
+    </div>
+
+    <script>
+        // 打字机效果
+        function typeWriter(element, text, speed, callback) {
+            let i = 0;
+            element.innerHTML = '';
+
+            function type() {
+                if (i < text.length) {
+                    const span = document.createElement('span');
+                    span.textContent = text.charAt(i);
+                    span.style.animationDelay = '0s';
+                    element.appendChild(span);
+
+                    // 添加打字机效果
+                    span.style.animation = 'fadeInUp 0.3s forwards';
+
+                    i++;
+                    setTimeout(type, speed);
+                } else if (callback) {
+                    callback();
+                }
+            }
+            type();
+        }
+
+        // 创建星星背景
+        function createStars() {
+            const stars = document.getElementById('stars');
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                stars.appendChild(star);
+            }
+        }
+
+        // 创建飘动的爱心
+        function createHeart() {
+            const hearts = document.getElementById('hearts');
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            const emojis = ['❤️', '💕', '💖', '💗', '💓', '💘', '💝', '✨', '💫'];
+            heart.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 4 + 6) + 's';
+            heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            hearts.appendChild(heart);
+
+            setTimeout(() => heart.remove(), 10000);
+        }
+
+        // 创建烟花
+        function createFirework(x, y) {
+            const fireworks = document.getElementById('fireworks');
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#ffffff', '#00d2d3', '#ff9f43'];
+
+            // 烟花上升
+            const rocket = document.createElement('div');
+            rocket.style.cssText = `
+                position: absolute;
+                left: ${x}px;
+                bottom: 0;
+                width: 4px;
+                height: 4px;
+                background: white;
+                border-radius: 50%;
+                box-shadow: 0 0 10px white;
+            `;
+            fireworks.appendChild(rocket);
+
+            rocket.animate([
+                { transform: 'translateY(0)', opacity: 1 },
+                { transform: `translateY(-${y}px)`, opacity: 1 }
+            ], {
+                duration: 800,
+                easing: 'ease-out'
+            }).onfinish = () => {
+                rocket.remove();
+
+                // 爆炸
+                for (let i = 0; i < 40; i++) {
+                    const particle = document.createElement('div');
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.cssText = `
+                        position: absolute;
+                        left: ${x}px;
+                        top: ${window.innerHeight - y}px;
+                        width: 5px;
+                        height: 5px;
+                        background: ${color};
+                        border-radius: 50%;
+                        box-shadow: 0 0 10px ${color}, 0 0 20px ${color};
+                    `;
+
+                    const angle = (Math.PI * 2 / 40) * i + Math.random() * 0.5;
+                    const velocity = 80 + Math.random() * 80;
+                    const vx = Math.cos(angle) * velocity;
+                    const vy = Math.sin(angle) * velocity;
+
+                    fireworks.appendChild(particle);
+
+                    particle.animate([
+                        { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                        { transform: `translate(${vx}px, ${vy + 50}px) scale(0)`, opacity: 0 }
+                    ], {
+                        duration: 1500 + Math.random() * 500,
+                        easing: 'ease-out'
+                    }).onfinish = () => particle.remove();
+                }
+            };
+        }
+
+        // 创建流星
+        function createMeteor() {
+            const meteor = document.createElement('div');
+            meteor.className = 'meteor';
+            meteor.style.left = Math.random() * window.innerWidth + 'px';
+            meteor.style.top = Math.random() * window.innerHeight * 0.5 + 'px';
+            document.body.appendChild(meteor);
+            setTimeout(() => meteor.remove(), 1000);
+        }
+
+        // 随机烟花
+        function randomFirework() {
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight * 0.5 + 200;
+            createFirework(x, y);
+        }
+
+        // 初始化
+        createStars();
+
+        // 开始文字动画
+        setTimeout(() => {
+            typeWriter(document.getElementById('title1'), '我们在一起的第', 150, () => {
+                setTimeout(() => {
+                    typeWriter(document.getElementById('title2'), '天 ❤️', 150, () => {
+                        // 开始显示消息
+                        setTimeout(() => {
+                            const messageEl = document.getElementById('message');
+                            const messages = [
+                                '今天是我们在一起的第100天',
+                                '感谢有你 ❤️',
+                                '每一天都因为有你而特别',
+                                '愿我们的爱情永远甜蜜'
+                            ];
+
+                            let lineIndex = 0;
+                            function showLine() {
+                                if (lineIndex < messages.length) {
+                                    const line = messages[lineIndex];
+                                    for (let i = 0; i < line.length; i++) {
+                                        const span = document.createElement('span');
+                                        span.textContent = line[i];
+                                        span.style.animationDelay = (i * 0.08) + 's';
+                                        span.style.animation = 'fadeInUp 0.5s forwards';
+                                        messageEl.appendChild(span);
+                                    }
+                                    messageEl.appendChild(document.createElement('br'));
+                                    lineIndex++;
+                                    setTimeout(showLine, line.length * 80 + 500);
+                                }
+                            }
+                            showLine();
+                        }, 500);
+                    });
+                }, 300);
+            });
+        }, 500);
+
+        // 启动效果
+        setInterval(createHeart, 600);
+        setInterval(randomFirework, 2000);
+        setInterval(createMeteor, 3000);
+
+        // 初始烟花
+        setTimeout(() => randomFirework(), 1000);
+        setTimeout(() => randomFirework(), 2000);
+        setTimeout(() => randomFirework(), 3000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+# 公众号配置
+# 公众号appId
+"app_id": "wx0fb9d814540b9d71",
+# 公众号appSecret
+"app_secret": "d2d92ceec4ebd6fad7a5e9501f529e91",
+# 模板消息id
+"template_id": "Bw0CJCQ8TkGoC7OA05M0auFoqKamDACU7q1isI8KXOA",
+# 接收公众号消息的微信号，如果有多个，需要在[]里用英文逗号间隔，例如["wx1", "wx2"]
+"user": ["omJX_2KfuC99CO7nvFQJAouqvWWw", "omJX_2PV9vfZAi_MJt4lD8AH3uFg"],
+
+# 信息配置
+# 和风天气apikey
+"weather_key": "f6799b8456ea4a4a81878cd7e6c69abd",
+# 所在地区，可为省，城市，区，县，同时支持国外城市，例如伦敦
+"region": "上海市",
+# 生日1，修改名字为对应需要显示的名字，如果生日为农历，在最前面加上r即可
+"birthday1": {"name": "妈妈", "birthday": "1974-06-17"},
+# 生日2
+"birthday2": {"name": "小恒", "birthday": "2003-04-23"},
+# 在一起的日子，格式同上，暂不不支持农历
+"love_date": "2025-09-26",
+# 金句中文，如果设置了，则会显示这里的，如果为空，默认会读取金山的每日金句
+"note_ch": "今天是我们在一起的第100天，感谢有你 ❤️",
+# 金句英文
+"note_en": "100 days together, every moment with you is precious.",
+# 点击消息跳转的链接
+# 特别文字（显示在日期下方）
+"special_text": "今天是我们在一起的第100天，感谢有你 ❤️"
+}
