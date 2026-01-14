@@ -1,0 +1,9 @@
+🗓️今天:{{date.DATA}}{{lunar_date.DATA}}
+🌅问候:{{greeting.DATA}}
+☁️天气:{{region.DATA}}天气: {{weather.DATA}}
+🌡️最低气温: {{temp_min.DATA}}
+🌡️最高气温: {{temp_max.DATA}}
+💕今日份情话: {{love_message.DATA}}💕
+❤️我们已经相恋: {{love_day.DATA}} 天啦❤️
+🎂距离你的阳历生日还有: {{birthday_solar.DATA}} 天🎂
+🎂距离你的农历生日还有: {{birthday_lunar.DATA}} 天🎂

@@ -5,25 +5,33 @@
 # 公众号appSecret
 "app_secret": "d2d92ceec4ebd6fad7a5e9501f529e91",
 # 模板消息id
-"template_id": "dsWayvol8gwZqt005FEuCKgAPf6B2upUchldVKXpqbY",
-# 接收公众号消息的微信号，如果有多个，需要在[]里用英文逗号间隔，例如["wx1", "wx2"]
+"template_id": "Ha7d8ohZUKUzOCeJsqpoXYvT8tIMi9YpsUDnmCyp6T8",
+# 接收公众号消息的微信号
 "user": ["omJX_2KfuC99CO7nvFQJAouqvWWw", "omJX_2PV9vfZAi_MJt4lD8AH3uFg"],
 
 # 信息配置
 # 和风天气apikey
 "weather_key": "f6799b8456ea4a4a81878cd7e6c69abd",
-# 所在地区，可为省，城市，区，县，同时支持国外城市，例如伦敦
+# 所在地区
 "region": "上海市",
-# 生日1，修改名字为对应需要显示的名字，如果生日为农历，在最前面加上r即可
+
+# 生日配置（阳历）
 "birthday1": {"name": "小恒", "birthday": "2003-04-23"},
-# 在一起的日子，格式同上，暂不不支持农历
+# 农历生日（格式：r年-月-日，需要把阳历生日转换为农历）
+"lunar_birthday": "r2003-03-22",
+
+# 在一起的日子
 "love_date": "2025-09-26",
-# 金句中文，如果设置了，则会显示这里的，如果为空，默认会读取金山的每日金句
-"note_ch": "今天是我们在一起的第100天，感谢有你 ❤️",
-# 金句英文
-"note_en": "100 days together, every moment with you is precious.",
+
+# 问候语
+"greeting": "(づ￣ 3￣)づ 美好的一天开始啦",
+
+# 甜蜜问候
+"love_message": "我有一个问题想问你，但在这之前你得先说，你愿意！",
+
+# 每日金句（为空则自动获取金山词霸每日金句）
+"note_ch": "",
+
 # 点击消息跳转的链接
-"click_url": "https://tracyaniu.github.io/H-H-Journey/",
-# 特别文字（显示在日期下方）
-"special_text": "今天是我们在一起的第100天，感谢有你 ❤️"
+"click_url": "https://tracyaniu.github.io/H-H-Journey/"
 }

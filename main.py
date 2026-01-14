@@ -27,11 +27,40 @@ def get_access_token():
         print("获取access_token失败，请检查app_id和app_secret是否正确")
         os.system("pause")
         sys.exit(1)
-    # print(access_token)
     return access_token
 
 
+def get_weather_emoji(weather_text):
+    """根据天气情况返回对应的emoji符号"""
+    weather_emoji_map = {
+        "晴": "☀️",
+        "多云": "☁️",
+        "阴": "☁️",
+        "小雨": "🌧️",
+        "中雨": "🌧️",
+        "大雨": "⛈️",
+        "暴雨": "⛈️",
+        "雷阵雨": "⚡",
+        "雨夹雪": "🌨️",
+        "小雪": "❄️",
+        "中雪": "❄️",
+        "大雪": "❄️",
+        "暴雪": "❄️",
+        "雾": "🌫️",
+        "霾": "😷",
+        "沙尘暴": "💨",
+        "浮尘": "💨",
+        "扬沙": "💨"
+    }
+
+    for key, emoji in weather_emoji_map.items():
+        if key in weather_text:
+            return emoji
+    return "🌤️"  # 默认返回
+
+
 def get_weather(region):
+    """获取天气信息，包括当前天气和最高最低气温"""
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
                       'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
@@ -48,54 +77,103 @@ def get_weather(region):
         os.system("pause")
         sys.exit(1)
     else:
-        # 获取地区的location--id
         location_id = response["location"][0]["id"]
+
+    # 获取当前天气
     weather_url = "https://devapi.qweather.com/v7/weather/now?location={}&key={}".format(location_id, key)
     response = get(weather_url, headers=headers).json()
-    # 天气
     weather = response["now"]["text"]
-    # 当前温度
-    temp = response["now"]["temp"] + u"\N{DEGREE SIGN}" + "C"
-    # 风向
-    wind_dir = response["now"]["windDir"]
-    return weather, temp, wind_dir
+
+    # 获取今日天气预报（包含最高最低气温）
+    forecast_url = "https://devapi.qweather.com/v7/weather/3d?location={}&key={}".format(location_id, key)
+    forecast_response = get(forecast_url, headers=headers).json()
+    temp_min = forecast_response["daily"][0]["tempMin"] + "°C"
+    temp_max = forecast_response["daily"][0]["tempMax"] + "°C"
+
+    return weather, temp_min, temp_max
 
 
-def get_birthday(birthday, year, today):
-    birthday_year = birthday.split("-")[0]
-    # 判断是否为农历生日
-    if birthday_year[0] == "r":
-        r_mouth = int(birthday.split("-")[1])
-        r_day = int(birthday.split("-")[2])
-        # 获取农历生日的生日
-        try:
-            year_date = ZhDate(year, r_mouth, r_day).to_datetime().date()
-        except TypeError:
-            print("请检查生日的日子是否在今年存在")
-            os.system("pause")
-            sys.exit(1)
+def get_lunar_date(today):
+    """获取农历日期和生肖年"""
+    lunar = ZhDate.from_datetime(datetime(today.year, today.month, today.day))
 
-    else:
-        # 获取国历生日的今年对应月和日
-        birthday_month = int(birthday.split("-")[1])
-        birthday_day = int(birthday.split("-")[2])
-        # 今年生日
-        year_date = date(year, birthday_month, birthday_day)
-    # 计算生日年份，如果还没过，按当年减，如果过了需要+1
+    # 农历月份
+    lunar_months = ["正", "二", "三", "四", "五", "六", "七", "八", "九", "十", "冬", "腊"]
+    # 农历日期
+    lunar_days = ["初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十",
+                  "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十",
+                  "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"]
+    # 天干
+    tiangan = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    # 地支
+    dizhi = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+    # 生肖
+    shengxiao = ["鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪"]
+
+    # 数字转中文
+    num_to_chinese = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"]
+
+    # 年份转中文
+    year_str = str(lunar.lunar_year)
+    year_chinese = ""
+    for digit in year_str:
+        year_chinese += num_to_chinese[int(digit)]
+
+    # 计算天干地支和生肖
+    gan_index = (lunar.lunar_year - 4) % 10
+    zhi_index = (lunar.lunar_year - 4) % 12
+    ganzhi = tiangan[gan_index] + dizhi[zhi_index]
+    animal = shengxiao[zhi_index]
+
+    lunar_month = lunar_months[lunar.lunar_month - 1]
+    lunar_day = lunar_days[lunar.lunar_day - 1]
+
+    lunar_date_str = "{}年{}月{} {}年（{}年）".format(year_chinese, lunar_month, lunar_day, ganzhi, animal)
+
+    return lunar_date_str
+
+
+def get_birthday_solar(birthday, year, today):
+    """计算阳历生日倒计时"""
+    birthday_month = int(birthday.split("-")[1])
+    birthday_day = int(birthday.split("-")[2])
+    year_date = date(year, birthday_month, birthday_day)
+
     if today > year_date:
-        if birthday_year[0] == "r":
-            # 获取农历明年生日的月和日
-            r_last_birthday = ZhDate((year + 1), r_mouth, r_day).to_datetime().date()
-            birth_date = date((year + 1), r_last_birthday.month, r_last_birthday.day)
-        else:
-            birth_date = date((year + 1), birthday_month, birthday_day)
-        birth_day = str(birth_date.__sub__(today)).split(" ")[0]
-    elif today == year_date:
-        birth_day = 0
+        year_date = date(year + 1, birthday_month, birthday_day)
+
+    if today == year_date:
+        return 0
     else:
-        birth_date = year_date
-        birth_day = str(birth_date.__sub__(today)).split(" ")[0]
-    return birth_day
+        return (year_date - today).days
+
+
+def get_birthday_lunar(birthday, year, today):
+    """计算农历生日倒计时"""
+    birthday_str = birthday
+    if birthday_str[0] == "r":
+        birthday_str = birthday_str[1:]
+
+    lunar_month = int(birthday_str.split("-")[1])
+    lunar_day = int(birthday_str.split("-")[2])
+
+    try:
+        # 今年的农历生日对应的公历日期
+        lunar_birthday = ZhDate(year, lunar_month, lunar_day).to_datetime().date()
+    except:
+        # 如果今年没有这个农历日期，尝试明年
+        lunar_birthday = ZhDate(year + 1, lunar_month, lunar_day).to_datetime().date()
+
+    if today > lunar_birthday:
+        try:
+            lunar_birthday = ZhDate(year + 1, lunar_month, lunar_day).to_datetime().date()
+        except:
+            lunar_birthday = ZhDate(year + 2, lunar_month, lunar_day).to_datetime().date()
+
+    if today == lunar_birthday:
+        return 0
+    else:
+        return (lunar_birthday - today).days
 
 
 def get_ciba():
@@ -111,7 +189,7 @@ def get_ciba():
     return note_ch, note_en
 
 
-def send_message(to_user, access_token, region_name, weather, temp, wind_dir, note_ch, note_en):
+def send_message(to_user, access_token, region_name, weather, temp_min, temp_max, note_ch):
     url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={}".format(access_token)
     week_list = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"]
     year = localtime().tm_year
@@ -119,18 +197,34 @@ def send_message(to_user, access_token, region_name, weather, temp, wind_dir, no
     day = localtime().tm_mday
     today = datetime.date(datetime(year=year, month=month, day=day))
     week = week_list[today.isoweekday() % 7]
-    # 获取在一起的日子的日期格式
+
+    # 获取农历日期
+    lunar_date = get_lunar_date(today)
+
+    # 获取在一起的天数
     love_year = int(config["love_date"].split("-")[0])
     love_month = int(config["love_date"].split("-")[1])
     love_day = int(config["love_date"].split("-")[2])
     love_date = date(love_year, love_month, love_day)
-    # 获取在一起的日期差
-    love_days = str(today.__sub__(love_date)).split(" ")[0]
-    # 获取所有生日数据
-    birthdays = {}
-    for k, v in config.items():
-        if k[0:5] == "birth":
-            birthdays[k] = v
+    love_days = (today - love_date).days
+
+    # 获取生日信息
+    birthday_info = config.get("birthday1", {})
+    birthday_str = birthday_info.get("birthday", "2003-04-23")
+
+    # 阳历生日倒计时
+    birthday_solar = get_birthday_solar(birthday_str, year, today)
+
+    # 农历生日倒计时（需要在config中添加农历生日）
+    lunar_birthday_str = config.get("lunar_birthday", "r2003-03-22")
+    birthday_lunar = get_birthday_lunar(lunar_birthday_str, year, today)
+
+    # 问候语
+    greeting = config.get("greeting", "(づ￣ 3￣)づ美好的一天开始啦(づ￣ 3￣)づ")
+
+    # 甜蜜问候
+    love_message = config.get("love_message", "(づ￣3￣)づ╭❤～: 我有一个问题想问你，但在这之前你得先说，你愿意！")
+
     data = {
         "touser": to_user,
         "template_id": config["template_id"],
@@ -138,36 +232,48 @@ def send_message(to_user, access_token, region_name, weather, temp, wind_dir, no
         "topcolor": "#FF0000",
         "data": {
             "date": {
-                "value": "{} {}".format(today, week),
-                "color": get_color()
+                "value": "{}年{}月{}日 {}".format(year, month, day, week),
+                "color": "#EED016"
             },
-            "special": {
-                "value": config.get("special_text", ""),
-                "color": "#FF6B6B"
+            "lunar_date": {
+                "value": lunar_date,
+                "color": "#849B97"
+            },
+            "greeting": {
+                "value": greeting,
+                "color": "#EED016"
             },
             "region": {
                 "value": region_name,
-                "color": get_color()
+                "color": "#4CBCD0"
             },
             "weather": {
                 "value": weather,
-                "color": get_color()
+                "color": "#4CBCD0"
             },
-            "temp": {
-                "value": temp,
-                "color": get_color()
+            "temp_min": {
+                "value": temp_min,
+                "color": "#0ACE5B"
             },
-            "wind_dir": {
-                "value": wind_dir,
-                "color": get_color()
+            "temp_max": {
+                "value": temp_max,
+                "color": "#FF6B6B"
+            },
+            "love_message": {
+                "value": love_message,
+                "color": "#FF6B6B"
             },
             "love_day": {
-                "value": love_days,
-                "color": get_color()
+                "value": str(love_days),
+                "color": "#CB6D9D"
             },
-            "note_en": {
-                "value": note_en,
-                "color": get_color()
+            "birthday_solar": {
+                "value": str(birthday_solar),
+                "color": "#6ECFDC"
+            },
+            "birthday_lunar": {
+                "value": str(birthday_lunar),
+                "color": "#CB6D9D"
             },
             "note_ch": {
                 "value": note_ch,
@@ -175,21 +281,15 @@ def send_message(to_user, access_token, region_name, weather, temp, wind_dir, no
             }
         }
     }
-    for key, value in birthdays.items():
-        # 获取距离下次生日的时间
-        birth_day = get_birthday(value["birthday"], year, today)
-        if birth_day == 0:
-            birthday_data = "今天{}生日哦，祝{}生日快乐！".format(value["name"], value["name"])
-        else:
-            birthday_data = "距离{}的生日还有{}天".format(value["name"], birth_day)
-        # 将生日数据插入data
-        data["data"][key] = {"value": birthday_data, "color": get_color()}
+
     headers = {
         'Content-Type': 'application/json',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
                       'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
     }
     response = post(url, headers=headers, json=data).json()
+    print("发送数据:", data)
+    print("返回结果:", response)
     if response["errcode"] == 40037:
         print("推送消息失败，请检查模板id是否正确")
     elif response["errcode"] == 40036:
@@ -221,13 +321,13 @@ if __name__ == "__main__":
     users = config["user"]
     # 传入地区获取天气信息
     region = config["region"]
-    weather, temp, wind_dir = get_weather(region)
-    note_ch = config["note_ch"]
-    note_en = config["note_en"]
-    if note_ch == "" and note_en == "":
-        # 获取词霸每日金句
-        note_ch, note_en = get_ciba()
+    weather, temp_min, temp_max = get_weather(region)
+
+    # 获取每日金句
+    note_ch = config.get("note_ch", "")
+    if note_ch == "":
+        note_ch, _ = get_ciba()
+
     # 公众号推送消息
     for user in users:
-        send_message(user, accessToken, region, weather, temp, wind_dir, note_ch, note_en)
-    os.system("pause")
+        send_message(user, accessToken, region, weather, temp_min, temp_max, note_ch)
