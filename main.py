@@ -178,7 +178,7 @@ def get_birthday_lunar(birthday, year, today):
 
 def get_love_message():
     """从第三方API获取每日情话"""
-    url = "https://api.uomg.com/api/rand.qinghua?format=text"
+    url = "https://api.lovelive.tools/api/SweetNothings"
     try:
         r = get(url)
         if r.status_code == 200:
