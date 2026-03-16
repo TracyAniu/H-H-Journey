@@ -176,6 +176,18 @@ def get_birthday_lunar(birthday, year, today):
         return (lunar_birthday - today).days
 
 
+def get_love_message():
+    """从第三方API获取每日情话"""
+    url = "https://api.uomg.com/api/rand.qinghua?format=text"
+    try:
+        r = get(url)
+        if r.status_code == 200:
+            return r.text.strip()
+    except:
+        pass
+    return config.get("love_message", "今天也很爱你哦~")
+
+
 def get_ciba():
     url = "http://open.iciba.com/dsapi/"
     headers = {
@@ -222,8 +234,8 @@ def send_message(to_user, access_token, region_name, weather, temp_min, temp_max
     # 问候语
     greeting = config.get("greeting", "(づ￣ 3￣)づ美好的一天开始啦(づ￣ 3￣)づ")
 
-    # 甜蜜问候
-    love_message = config.get("love_message", "(づ￣3￣)づ╭❤～: 我有一个问题想问你，但在这之前你得先说，你愿意！")
+    # 甜蜜问候（从API获取每日情话）
+    love_message = get_love_message()
 
     data = {
         "touser": to_user,
